@@ -38,3 +38,5 @@ The real time clock (RTC) (DS3231) is used to:
 	gathers readings reported via MQTT,
 	maintains a log of reported readings (.csv format), and
         updates an internal (to your own network) Webpage displaying the current finalized reading values
+	
+questions: info @ rlatour.com
