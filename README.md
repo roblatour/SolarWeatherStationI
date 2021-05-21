@@ -34,9 +34,12 @@ The real time clock (RTC) (DS3231) is used to:
         wake the ESP32 from deep sleep at exact times, and 
         take a temperature reading (as noted above)
 
+links to all components can be found in the SolarWeatherStation.ino file.
+
 (Optionally) There is a windows side solution (not yet posted - to follow), which with the help of a MQTT server:
 	gathers readings reported via MQTT,
 	maintains a log of reported readings (.csv format), and
         updates an internal (to your own network) Webpage displaying the current finalized reading values
-	
+		
+
 questions: info @ rlatour.com
