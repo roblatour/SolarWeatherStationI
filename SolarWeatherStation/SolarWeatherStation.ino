@@ -3,6 +3,7 @@
 	Backyard weather station v9
 	Copyright Rob Latour, 2021
 	MIT
+	https://github.com/roblatour/SolarWeatherStation
 	
 	(all parts listed below are basically what I used, over time I suspect the links will break)
 
