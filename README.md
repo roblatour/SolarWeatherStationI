@@ -29,6 +29,10 @@ The real-time clock (RTC) (DS3231) is used to:
 
 links to all components can be found in the SolarWeatherStation.ino file.
 
-(Optionally) There is a windows side solution (not yet posted - to follow), which with the help of an MQTT server: gathers readings reported via MQTT, maintains a log of reported readings (.csv format), and updates an internal (to your own network) Webpage displaying the current finalized reading values
+(Optionally) Also included is the source code for a windows side service, which gathers readings reported via MQTT, maintains a log of reported readings (.csv format), and updates an internal (to your own network) Webpage displaying the current finalized reading values.
+
+Recommended other components:
+	Raspberry PI Mosquitto MQTT	
+	Raspberry PI Apache Server
 
 questions: info @ rlatour.com

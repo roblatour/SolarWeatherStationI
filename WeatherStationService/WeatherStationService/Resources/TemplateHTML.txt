@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="10">
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <title>Backyard Weather Station</title>
+  <style>
+    html {
+     font-family: Arial;
+     display: inline-block;
+     margin: 0px auto;
+     text-align: center;
+    }
+    h2 { font-size: 3.0rem; }
+    p { font-size: 3.0rem; }
+    .units { font-size: 1.2rem; }
+    .x-labels{
+      font-size: 1.5rem;
+      vertical-align:middle;
+      padding-bottom: 15px;
+    }
+  .auto-style1 {
+        font-size: small;
+  }
+   .auto-style2 {
+        font-size: small;
+        color: #FF0000;
+  }
+  </style>
+</head>
+<body>
+  <h2>Backyard Weather Station</h2>
+  <p><span class="x-labels">Temperature</span> <span id="temperature">%TEMPERATURE%</span> <sup class="units">&deg;C</sup></p> 
+  <p><span class="x-labels">Humidity</span> <span id="humidity">%HUMIDITY%</span> <span class="x-labels">%</span></p>
+  <p><span class="x-labels">Pressure</span> <span id="pressure">%PRESSURE%</span> <span class="x-labels">mb</span></p>
+  <p class="auto-style1">last updated %UPDATED%</p>
+</body>
+</html>

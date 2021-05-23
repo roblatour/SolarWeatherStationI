@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="ApcheServer_UserID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">userid</Value>
+    </Setting>
+    <Setting Name="ApcheServer_Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)">password</Value>
+    </Setting>
+    <Setting Name="ApcheServer_IPAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.1.14</Value>
+    </Setting>
+    <Setting Name="MQTT_IP_Address" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.1.14</Value>
+    </Setting>
+    <Setting Name="ApcheServer_Webpage_Filename" Type="System.String" Scope="User">
+      <Value Profile="(Default)">/var/www/html/index.html</Value>
+    </Setting>
+    <Setting Name="NewReadingsShouldBeAvailableInThisManyMinutes" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="OnFailedConnectionOrDisconncetRetryAfterThisManySeconds" Type="System.String" Scope="User">
+      <Value Profile="(Default)">30</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
