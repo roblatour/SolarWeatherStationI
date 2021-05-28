@@ -1,67 +1,67 @@
 /*
 
-	Backyard weather station v9
+	Backyard weather station v9.1
 	Copyright Rob Latour, 2021
 	License: MIT
-	
+
 	https://github.com/roblatour/SolarWeatherStation
-	
+
 	(all parts listed below are basically what I used, over time I suspect the links will break)
 
     ESP32:
 	physical board          ESP32 Devkit c_V4  ESP32-WROOM-32U  with external antenna)
 	                        https://www.aliexpress.com/item/4000851307120.html
-							  
-							board definition used from Arduino library - ESP32 Devkit 1
-	
+
+	             						board definition used from Arduino library - DOIT ESP32 Devkit 1
+
 	Antenna:
 	https://www.aliexpress.com/item/4001054693109.html
-	
+
 	2 x BME280:
 	https://www.aliexpress.com/item/32912100752.html  (3.3v)
-	
+
 	2 x DHT22:
 	https://www.aliexpress.com/item/32759901711.html
-	
+
 	1 x DS3231 (RTC):
 	https://www.aliexpress.com/item/1005001648015853.htm  (blue)
-		
+
 	1 x Solar charger board:
 	https://www.dfrobot.com/product-1712.html
-	
+
 	1 x Solar panel (110 mm x136 mm)
 	https://www.aliexpress.com/item/33009858730.html?spm=a2g0s.9042311.0.0.27424c4dCM0AUB
-	
+
 	2 x 18650 Batteries:
 	(I used two batteries in the case, which ment a soldering hack to the solar charger board to connect another battery holder - you might be able to get away with just one battery)
-	
+
 	extra battery holder (if needed):
 	https://www.aliexpress.com/item/32806159516.html (pack of 20)
-	
+
 	Short USB wire to connect ESP32 to Solar charger board
 	https://www.aliexpress.com/item/33059150976.html
-	
+
 	Wiring:
 	see https://oshwlab.com/RobLatour/weatherstation_copy_copy_copy
-	
+
 	custom PCB:
 	https://oshwlab.com/RobLatour/weatherstation_copy_copy_copy
-	
+
 	custom 3D printed case:
 	https://www.thingiverse.com/thing:4779465
 	(a tight fit, but doable with PCB + solar charger above + two batteries - that is what I used)
-	
+
     Bonus:
 	I find working with most ESP32 on a breadboard bothersome because they are not breadboard friendly, so I also designed this 3d printable solution for that:
 	https://www.thingiverse.com/thing:4523270
 
-	
+
 	Other Arduion libraries used (with thanks to their authors):
 	- https://github.com/adafruit/Adafruit_BME280_Library
 	- https://github.com/adafruit/Adafruit_Sensor
 	- https://github.com/JChristensen/DS3232RTC
 	- https://github.com/PaulStoffregen/Time
-	
+
 */
 
 #include "arduino_user_settings.h"
@@ -173,7 +173,7 @@ void Setup_Serial() {
     Serial.begin(SERIAL_PORT_SPEED);
     Serial.println("****************************************************************");
     Serial.println("");
-    Serial.println("Solar Weather Station v9");
+    Serial.println("Solar Weather Station v9.1");
     Serial.println("2021-05-21");
     Serial.println("by Rob Latour, 2021");
     Serial.println("");
@@ -732,7 +732,7 @@ void Finalize_Readings() {
   // accounts for the temperature readings from the BME820 and DHT22 devices plus the DS3231 (RTC)
 
   // removing the + 1 to remove the results of the DS3231
-   for (int i = 0; i < (NumberOfBMEDevices + NumberOfDHTDevices + 1); i++) {
+  for (int i = 0; i < (NumberOfBMEDevices + NumberOfDHTDevices + 1); i++) {
 
     if (!isnan(Reading_Temperature[i])) {
       Final_Temperature += Reading_Temperature[i];
@@ -919,7 +919,10 @@ bool SetTimeFromNTPServer() {
 
   bool ReturnValue = false;
 
-  configTime(0, 0, ntpServer);   // get the UTC time from an internet ntp server
+  // for some reason two calls to set the time using the ntpServer seems to result in a more accurate result
+  configTime(0, 0, ntpServer);   // get the UTC time from an internet ntp server (try 1)
+  delay(10);
+  configTime(0, 0, ntpServer);   // get the UTC time from an internet ntp server (try 2) 
 
   if (getLocalTime(&timeinfo)) {
 
@@ -1077,9 +1080,9 @@ bool OTA_Enabled_RightNow() {
 
   if ( OTA_Enabled_Hours.length() == 24 )
   {
-    
+
     bool returnvalue = ( String(OTA_Enabled_Hours.charAt(hour())) == "Y" );
-    
+
     if (DEBUG_ENABLED)
       if (returnvalue)
         Serial.println("OTA Update Window opened ...\n");
@@ -1087,7 +1090,7 @@ bool OTA_Enabled_RightNow() {
         Serial.println("OTA Update Window closed\n");
 
     return returnvalue;
-    
+
   }
   else {
 
