@@ -18,7 +18,7 @@ Optionally finalized readings may be published via MQTT. As well, if you like ad
 
 Supports optional Over the Air (OTA) updates, with an OTA update window configurable as follows: open only for a specified time period associated with each reporting period, optionally, also only available at the top of the hour, optionally, also only during specific hours. I personally use, an OTA window open for 15 seconds, at the top of every hour, between 8:00 am and 10 pm inclusive. This cuts down on power consumption for my solar-based weather station.
 
-Additionally, to help reduce power consumption, the BME280 and DHT22 sensors only powered when needed (~4 seconds in each reporting period), and the ESP32 goes into deep sleep when not required.
+Additionally, to help reduce power consumption, the BME280 and DHT22 sensors are only powered when needed (~4 seconds in each reporting period), and the ESP32 goes into deep sleep when not required.
 
 Finally, to further reduce power consumption, I’ve personally physically disabled to power LEDs on the ESP32 and the DS3231.
 
