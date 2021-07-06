@@ -8,7 +8,7 @@
 
 	(all parts listed below are basically what I used, over time I suspect the links will break)
 
-    ESP32:
+  ESP32:
 	physical board          ESP32 Devkit c_V4  ESP32-WROOM-32U  with external antenna)
 	                        https://www.aliexpress.com/item/4000851307120.html
 
@@ -237,7 +237,8 @@ bool Setup_WiFi() {
     if (DEBUG_ENABLED)
       Serial.print("Attempting to connect to WiFi");
 
-    WiFi.mode(WIFI_STA);
+    //WiFi.mode(WIFI_STA);
+    WiFi.mode(WIFI_AP_STA);
     WiFi.begin(wifi_name, wifi_pass);
     delay(1000);
 
@@ -271,7 +272,8 @@ bool Setup_WiFi() {
 
         WiFi.disconnect(true);
         delay(1000);
-        WiFi.mode(WIFI_STA);
+        //WiFi.mode(WIFI_STA);
+        WiFi.mode(WIFI_AP_STA);
         delay(1000);
 
       }
