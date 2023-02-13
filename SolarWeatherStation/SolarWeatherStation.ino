@@ -1,7 +1,7 @@
 /*
 
-	Backyard weather station v9.1
-	Copyright Rob Latour, 2021
+	Backyard weather station v10.0
+	Copyright Rob Latour, 2022
 	License: MIT
 
 	https://github.com/roblatour/SolarWeatherStation
@@ -12,7 +12,9 @@
 	physical board          ESP32 Devkit c_V4  ESP32-WROOM-32U  with external antenna)
 	                        https://www.aliexpress.com/item/4000851307120.html
 
-	             						board definition used from Arduino library - DOIT ESP32 Devkit 1
+                                Board Manager - ESP32 version 1.0.6 
+	             		board definition used from Arduino library - DOIT ESP32 Devkit 1
+
 
 	Antenna:
 	https://www.aliexpress.com/item/4001054693109.html
@@ -61,6 +63,7 @@
 	- https://github.com/adafruit/Adafruit_Sensor
 	- https://github.com/JChristensen/DS3232RTC
 	- https://github.com/PaulStoffregen/Time
+        - https://github.com/knolleary/pubsubclient
 
 */
 
@@ -136,17 +139,16 @@ const float ReadingUnavailable = 18670701;
 
 WiFiClientSecure SecureWeatherClient;
 
-char* PWS_Host = "pwsupdate.pwsweather.com";
+const String PWS_Host = "pwsupdate.pwsweather.com";
 const String PWS_Folder = "/api/v1/submitwx?";
 
-char* UNDRGRND_Host = "rtupdate.wunderground.com";
+const String UNDRGRND_Host = "rtupdate.wunderground.com";
 const String UNDRGRND_Folder = "/weatherstation/updateweatherstation.php?";
 
 const String SoftwareType = "ESP32DIY";
 
 String LastPWSResponse;
 String LastUndergroundResponse;
-
 
 // MQTT stuff
 
@@ -173,9 +175,9 @@ void Setup_Serial() {
     Serial.begin(SERIAL_PORT_SPEED);
     Serial.println("****************************************************************");
     Serial.println("");
-    Serial.println("Solar Weather Station v9.1");
-    Serial.println("2021-05-21");
-    Serial.println("by Rob Latour, 2021");
+    Serial.println("Solar Weather Station v10");
+    Serial.println("2023-02-13");
+    Serial.println("by Rob Latour, 2023");
     Serial.println("");
   }
 
@@ -210,15 +212,15 @@ void Setup_RTC() {
   rtc.begin();
   rtc.writeRTC(RTC_CONTROL, (rtc.readRTC(RTC_CONTROL) | _BV(BBSQW)));
 
-  rtc.setAlarm(ALM1_MATCH_DATE, 0, 0, 0, 1);
-  rtc.alarm(ALARM_1);
-  rtc.alarmInterrupt(ALARM_1, false);
-  rtc.clearAlarm(ALARM_1);
+  rtc.setAlarm(DS3232RTC::ALM1_MATCH_DATE, 0, 0, 0, 1);
+  rtc.alarm(DS3232RTC::ALARM_1);
+  rtc.alarmInterrupt(DS3232RTC::ALARM_1, false);
+  rtc.clearAlarm(DS3232RTC::ALARM_1);
 
-  rtc.setAlarm(ALM2_MATCH_DATE, 0, 0, 0, 1);
-  rtc.alarm(ALARM_2);
-  rtc.alarmInterrupt(ALARM_2, false);
-  rtc.clearAlarm(ALARM_2);
+  rtc.setAlarm(DS3232RTC::ALM2_MATCH_DATE, 0, 0, 0, 1);
+  rtc.alarm(DS3232RTC::ALARM_2);
+  rtc.alarmInterrupt(DS3232RTC::ALARM_2, false);
+  rtc.clearAlarm(DS3232RTC::ALARM_2);
 
 }
 
@@ -251,8 +253,9 @@ bool Setup_WiFi() {
       counter++;
       delay (1000);
     }
-
-    Serial.println("");
+    
+    if (DEBUG_ENABLED)
+       Serial.println("");
 
     if ( WiFi.status() == WL_CONNECTED )
     {
@@ -324,9 +327,10 @@ bool MQTT_Connect() {
 
   while ((!MQTTclient.connected()) && attempts <= 3)  {
 
-    Serial.print("Attempting MQTT connection...");
+    if (DEBUG_ENABLED)
+      Serial.print("Attempting MQTT connection...");
 
-    if (MQTTclient.connect(MQTT_CLIENT_NAME)) {
+    if (MQTTclient.connect(MQTT_CLIENT_NAME, MQTT_USER_NAME, MQTT_USER_PASSWORD)) {
 
       ReturnValue = true;
 
@@ -547,7 +551,7 @@ void Publish_Readings_to_MQTTServer() {
 
 //********************************************************************************************************************************************************************
 
-String Publish_Readings_to_WeatherService(char* host, String folder, String id, String password ) {
+String Publish_Readings_to_WeatherService(String host, String folder, String id, String password ) {
 
   // prepare post, examples:
   // https://pwsupdate.pwsweather.com/api/v1/submitwx?ID=xxxxxx&PASSWORD=xxxxxx&dateutc=2021-04-30+15:20:01&tempf=34.88&baromin=29.49&humidity=83&softwaretype=Whatever&action=updateraw
@@ -598,7 +602,7 @@ String Publish_Readings_to_WeatherService(char* host, String folder, String id, 
     Serial.print(host);
   }
 
-  if (SecureWeatherClient.connect(host, 443)) {
+  if (SecureWeatherClient.connect(host.c_str(), 443)) {
     if (DEBUG_ENABLED) {
       Serial.println("...connection succeeded");
     }
@@ -733,7 +737,7 @@ void Finalize_Readings() {
 
   // accounts for the temperature readings from the BME820 and DHT22 devices plus the DS3231 (RTC)
 
-  // removing the + 1 to remove the results of the DS3231
+  // remove the + 1 in the next line to remove the results of the DS3231
   for (int i = 0; i < (NumberOfBMEDevices + NumberOfDHTDevices + 1); i++) {
 
     if (!isnan(Reading_Temperature[i])) {
@@ -901,16 +905,20 @@ void Take_DS3231_Reading(int ReadingIndex) {
 
 void printDigits(int digits) {
 
-  if (digits < 10)
-    Serial.print("0");
-  Serial.print(digits);
-
+  if (DEBUG_ENABLED) {
+     if (digits < 10)
+        Serial.print("0");
+     Serial.print(digits);
+     }
+  
 }
 
 void printCurrentTime() {
 
-  Serial.print(year()); Serial.print("-"); printDigits(month()); Serial.print("-"); printDigits(day()); Serial.print(" ");
-  printDigits(hour()); Serial.print(":"); printDigits(minute()); Serial.print(":"); printDigits(second()); Serial.println("");
+  if (DEBUG_ENABLED) {
+     Serial.print(year()); Serial.print("-"); printDigits(month()); Serial.print("-"); printDigits(day()); Serial.print(" ");
+     printDigits(hour()); Serial.print(":"); printDigits(minute()); Serial.print(":"); printDigits(second()); Serial.println("");
+  }
 
 }
 
@@ -924,7 +932,7 @@ bool SetTimeFromNTPServer() {
   // for some reason two calls to set the time using the ntpServer seems to result in a more accurate result
   configTime(0, 0, ntpServer);   // get the UTC time from an internet ntp server (try 1)
   delay(10);
-  configTime(0, 0, ntpServer);   // get the UTC time from an internet ntp server (try 2) 
+  configTime(0, 0, ntpServer);   // get the UTC time from an internet ntp server (try 2)
 
   if (getLocalTime(&timeinfo)) {
 
@@ -1145,16 +1153,16 @@ void RTC_Sleep() {
 
 
   // set primary alarm to wakeup at the top of the nextWakeupMinute exactly
-  rtc.setAlarm(ALM2_MATCH_MINUTES, 0, nextWakeupMinute, 0, 0);
-  rtc.alarm(ALARM_2);
-  rtc.squareWave(SQWAVE_NONE);
-  rtc.alarmInterrupt(ALARM_2, true);
+  rtc.setAlarm(DS3232RTC::ALM2_MATCH_MINUTES, 0, nextWakeupMinute, 0, 0);
+  rtc.alarm(DS3232RTC::ALARM_2);
+  rtc.squareWave(DS3232RTC::SQWAVE_NONE);
+  rtc.alarmInterrupt(DS3232RTC::ALARM_2, true);
 
   // set secondary alarm to wakeup at the nextWakeupMinut plus one second (used as a fallback to the primary alarm not working)
-  rtc.setAlarm(ALM1_MATCH_MINUTES, 0, nextWakeupMinute, 1, 0);
-  rtc.alarm(ALARM_1);
-  rtc.squareWave(SQWAVE_NONE);
-  rtc.alarmInterrupt(ALARM_1, true);
+  rtc.setAlarm(DS3232RTC::ALM1_MATCH_MINUTES, 0, nextWakeupMinute, 1, 0);
+  rtc.alarm(DS3232RTC::ALARM_1);
+  rtc.squareWave(DS3232RTC::SQWAVE_NONE);
+  rtc.alarmInterrupt(DS3232RTC::ALARM_1, true);
 
   pinMode(interruptPin, INPUT_PULLUP);
   rtc_gpio_pullup_en(interruptPin);
