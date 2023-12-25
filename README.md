@@ -1,5 +1,7 @@
 #Solar Weather Station I 
 
+Please see [Solar Weather Station III](https://github.com/roblatour/SolarWeatherStationIII) for the latest update!
+
 Features:
 
 Gathers weather readings from multiple devices:
