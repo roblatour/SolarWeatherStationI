@@ -40,3 +40,7 @@ Recommended other components:
 	Raspberry PI Apache Server
 
 questions: info @ rlatour.com
+
+## Support
+
+[<img alt="buy me  a coffee" width="200px" src="https://cdn.buymeacoffee.com/buttons/v2/default-blue.png" />](https://www.buymeacoffee.com/roblatour)
